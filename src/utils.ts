@@ -1,4 +1,4 @@
-import { NewDiaryEntry, Weather } from "./types";
+import { NewDiaryEntry, Weather, Visibility } from "./types";
 
 const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
@@ -33,11 +33,29 @@ const parseWeather = (weather: unknown): Weather => {
         throw new Error('Incorrect or missing weather: ' + weather);
     }
     return weather;
-}
+};
 
-const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isVisibility = (param: any): param is Visibility => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return Object.values(Visibility).includes(param);
+};
+
+const parseVisibility = (visibility: unknown): Visibility => {
+    if(!visibility || !isVisibility(visibility)) {
+      throw new Error('Incorrect or missing visibility: ' + visibility);
+    }
+    return visibility;
+};
+
+type Fields = { comment: unknown, date: unknown, weather: unknown, visibility: unknown };
+
+const toNewDiaryEntry = ({comment, date, weather, visibility }: Fields): NewDiaryEntry => {
     const newEntry: NewDiaryEntry = {
-
+        comment: parseComment(comment),
+        date: parseDate(date),
+        weather: parseWeather(weather),
+        visibility: parseVisibility(visibility)
     };
     return newEntry;
 };
